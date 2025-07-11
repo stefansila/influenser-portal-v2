@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, Suspense } from 'react'
 import Image from 'next/image'
 import { useAuth } from '../context/AuthContext'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -11,7 +11,7 @@ import { Toaster } from 'react-hot-toast'
 // Create a redirection key unique to this page
 const REDIRECT_KEY = 'signup_redirect_check';
 
-export default function SignUp() {
+function SignUpForm() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -502,4 +502,12 @@ export default function SignUp() {
       </div>
     </div>
   )
+}
+
+export default function SignUp() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <SignUpForm />
+    </Suspense>
+  );
 } 

@@ -1,10 +1,10 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { supabase } from '@/app/lib/supabase'
 
-export default function CompleteRegistrationPage() {
+function CompleteRegistrationForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   
@@ -266,3 +266,11 @@ export default function CompleteRegistrationPage() {
     </div>
   )
 } 
+
+export default function CompleteRegistrationPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <CompleteRegistrationForm />
+    </Suspense>
+  );
+}

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import Image from 'next/image'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { supabase } from '../lib/supabase'
@@ -11,7 +11,7 @@ import { Toaster } from 'react-hot-toast'
 // Create a redirection key unique to this page
 const REDIRECT_KEY = 'reset_password_redirect_check';
 
-export default function ResetPassword() {
+function ResetPasswordForm() {
   const [email, setEmail] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -438,3 +438,11 @@ export default function ResetPassword() {
     </div>
   )
 } 
+
+export default function ResetPassword() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ResetPasswordForm />
+    </Suspense>
+  );
+}
