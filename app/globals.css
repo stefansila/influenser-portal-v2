@@ -1,0 +1,820 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 255, 255, 255;
+  --background-rgb: 8, 8, 10;
+  --Grey: #9CA3AF;
+  --yellow: #FFB900;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background-color: rgb(var(--background-rgb));
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+}
+
+/* iPhone specific select field styling */
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 100% !important;
+  min-width: 100% !important;
+  box-sizing: border-box;
+}
+
+/* Ensure select fields look consistent on iPhone */
+@supports (-webkit-touch-callout: none) {
+  select {
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    width: 100% !important;
+    min-width: 100% !important;
+    padding: 12px 16px !important;
+    border-radius: 8px !important;
+    background-color: #080808 !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: white !important;
+    font-size: 16px !important; /* Prevents zoom on iPhone */
+    line-height: 1.5 !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 12px center !important;
+    background-size: 16px !important;
+    -webkit-tap-highlight-color: transparent !important;
+    touch-action: manipulation !important;
+  }
+  
+  select:focus {
+    outline: none !important;
+    border-color: #FFB900 !important;
+    box-shadow: 0 0 0 1px #FFB900 !important;
+  }
+  
+  select option {
+    background-color: #080808 !important;
+    color: white !important;
+    padding: 8px !important;
+    font-size: 16px !important;
+  }
+}
+
+/* Additional iPhone-specific fixes */
+@media screen and (-webkit-min-device-pixel-ratio: 2) {
+  select {
+    -webkit-appearance: none !important;
+    width: 100% !important;
+    min-width: 100% !important;
+    font-size: 16px !important;
+    -webkit-tap-highlight-color: transparent !important;
+  }
+}
+
+/* iOS Safari specific fixes */
+@media screen and (max-device-width: 480px) and (-webkit-min-device-pixel-ratio: 2) {
+  select {
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    width: 100% !important;
+    min-width: 100% !important;
+    font-size: 16px !important;
+    padding: 12px 16px !important;
+    border-radius: 8px !important;
+    background-color: rgba(255, 255, 255, 0.04) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    color: white !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23999999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 12px center !important;
+    background-size: 16px !important;
+    -webkit-tap-highlight-color: transparent !important;
+    touch-action: manipulation !important;
+  }
+  
+  .select-field {
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    width: 100% !important;
+    min-width: 100% !important;
+    font-size: 16px !important;
+    -webkit-tap-highlight-color: transparent !important;
+    touch-action: manipulation !important;
+  }
+}
+
+/* Date picker custom styling */
+input[type="date"] {
+  position: relative;
+  cursor: pointer; /* Make the entire input clickable */
+  width: 100%;
+  min-height: 48px; /* Ensures consistent height */
+  height: auto;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* Style calendar button with yellow color but make it cover the whole input */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23FFB900' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2' ry='2'%3E%3C/rect%3E%3Cline x1='16' y1='2' x2='16' y2='6'%3E%3C/line%3E%3Cline x1='8' y1='2' x2='8' y2='6'%3E%3C/line%3E%3Cline x1='3' y1='10' x2='21' y2='10'%3E%3C/line%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0.01; /* Almost invisible but still functional */
+  cursor: pointer;
+}
+
+/* Add custom yellow calendar icon */
+.date-input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.date-input-wrapper::after {
+  content: "";
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23FFB900' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2' ry='2'%3E%3C/rect%3E%3Cline x1='16' y1='2' x2='16' y2='6'%3E%3C/line%3E%3Cline x1='8' y1='2' x2='8' y2='6'%3E%3C/line%3E%3Cline x1='3' y1='10' x2='21' y2='10'%3E%3C/line%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* iPhone specific date field styling */
+@supports (-webkit-touch-callout: none) {
+  input[type="date"] {
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    width: 100% !important;
+    min-width: 100% !important;
+    padding: 12px 16px !important;
+    border-radius: 8px !important;
+    background-color: #080808 !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: white !important;
+    font-size: 16px !important; /* Prevents zoom on iPhone */
+    line-height: 1.5 !important;
+    min-height: 48px !important; /* Ensures consistent height */
+    height: auto !important;
+    box-sizing: border-box !important;
+    -webkit-tap-highlight-color: transparent !important;
+    touch-action: manipulation !important;
+  }
+  
+  input[type="date"]:focus {
+    outline: none !important;
+    border-color: #FFB900 !important;
+    box-shadow: 0 0 0 1px #FFB900 !important;
+  }
+  
+  input[type="date"]::-webkit-datetime-edit {
+    color: white !important;
+    padding: 0 !important;
+    min-height: 20px !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+  
+  input[type="date"]::-webkit-datetime-edit-text {
+    color: rgba(255, 255, 255, 0.6) !important;
+    padding: 0 2px !important;
+  }
+  
+  input[type="date"]::-webkit-datetime-edit-month-field,
+  input[type="date"]::-webkit-datetime-edit-day-field,
+  input[type="date"]::-webkit-datetime-edit-year-field {
+    color: white !important;
+    padding: 0 2px !important;
+    min-width: 20px !important;
+  }
+  
+  /* Style for empty date inputs */
+  input[type="date"]:invalid {
+    color: rgba(255, 255, 255, 0.6) !important;
+  }
+  
+  /* Style for date inputs with invalid range */
+  input[type="date"].date-invalid {
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 0 1px #ef4444 !important;
+  }
+  
+  input[type="date"].date-invalid::-webkit-calendar-picker-indicator {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23ef4444' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2' ry='2'%3E%3C/rect%3E%3Cline x1='16' y1='2' x2='16' y2='6'%3E%3C/line%3E%3Cline x1='8' y1='2' x2='8' y2='6'%3E%3C/line%3E%3Cline x1='3' y1='10' x2='21' y2='10'%3E%3C/line%3E%3C/svg%3E") !important;
+  }
+  
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23FFB900' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2' ry='2'%3E%3C/rect%3E%3Cline x1='16' y1='2' x2='16' y2='6'%3E%3C/line%3E%3Cline x1='8' y1='2' x2='8' y2='6'%3E%3C/line%3E%3Cline x1='3' y1='10' x2='21' y2='10'%3E%3C/line%3E%3C/svg%3E") !important;
+    background-size: 16px !important;
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+    width: 20px !important;
+    height: 20px !important;
+    cursor: pointer !important;
+    opacity: 1 !important;
+    margin-left: auto !important;
+  }
+}
+
+/* Additional iPhone-specific date fixes */
+@media screen and (-webkit-min-device-pixel-ratio: 2) {
+  input[type="date"] {
+    -webkit-appearance: none !important;
+    width: 100% !important;
+    min-width: 100% !important;
+    font-size: 16px !important;
+    -webkit-tap-highlight-color: transparent !important;
+  }
+}
+
+/* iOS Safari specific date fixes */
+@media screen and (max-device-width: 480px) and (-webkit-min-device-pixel-ratio: 2) {
+  input[type="date"] {
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    width: 100% !important;
+    min-width: 100% !important;
+    font-size: 16px !important;
+    padding: 12px 16px !important;
+    border-radius: 8px !important;
+    background-color: rgba(255, 255, 255, 0.04) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    color: white !important;
+    min-height: 48px !important; /* Ensures consistent height */
+    height: auto !important;
+    box-sizing: border-box !important;
+    -webkit-tap-highlight-color: transparent !important;
+    touch-action: manipulation !important;
+  }
+  
+  input[type="date"]::-webkit-datetime-edit {
+    min-height: 20px !important;
+    display: flex !important;
+    align-items: center !important;
+    color: white !important;
+  }
+  
+  input[type="date"]::-webkit-datetime-edit-text {
+    color: rgba(255, 255, 255, 0.6) !important;
+    padding: 0 2px !important;
+  }
+  
+  input[type="date"]::-webkit-datetime-edit-month-field,
+  input[type="date"]::-webkit-datetime-edit-day-field,
+  input[type="date"]::-webkit-datetime-edit-year-field {
+    color: white !important;
+    padding: 0 2px !important;
+    min-width: 20px !important;
+  }
+  
+  /* Style for empty date inputs on iOS */
+  input[type="date"]:invalid {
+    color: rgba(255, 255, 255, 0.6) !important;
+  }
+  
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23FFB900' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2' ry='2'%3E%3C/rect%3E%3Cline x1='16' y1='2' x2='16' y2='6'%3E%3C/line%3E%3Cline x1='8' y1='2' x2='8' y2='6'%3E%3C/line%3E%3Cline x1='3' y1='10' x2='21' y2='10'%3E%3C/line%3E%3C/svg%3E") !important;
+    background-size: 16px !important;
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+    width: 20px !important;
+    height: 20px !important;
+    opacity: 1 !important;
+    margin-left: auto !important;
+  }
+  
+  .date-input-field {
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    width: 100% !important;
+    min-width: 100% !important;
+    min-height: 48px !important; /* Ensures consistent height */
+    height: auto !important;
+    font-size: 16px !important;
+    -webkit-tap-highlight-color: transparent !important;
+    touch-action: manipulation !important;
+  }
+}
+
+@layer components {
+  .input-field {
+    @apply w-full px-3 py-4 rounded-lg bg-inputBg border border-white/20 focus:outline-none text-textTertiary;
+  }
+
+  .select-field {
+    @apply w-full px-3 py-4 rounded-lg bg-inputBg border border-white/20 focus:outline-none text-textTertiary;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23999999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+    font-size: 16px; /* Prevents zoom on iPhone */
+    min-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .select-field:focus {
+    @apply border-white/40;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23FFB900' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  }
+
+  .date-input-field {
+    @apply w-full px-3 py-4 rounded-lg bg-inputBg border border-white/20 focus:outline-none text-textTertiary;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    font-size: 16px; /* Prevents zoom on iPhone */
+    min-width: 100%;
+    min-height: 48px; /* Ensures consistent height */
+    height: auto;
+    box-sizing: border-box;
+    position: relative;
+  }
+
+  .date-input-field:focus {
+    @apply border-white/40;
+  }
+
+  .date-input-field::-webkit-calendar-picker-indicator {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23999999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2' ry='2'%3E%3C/rect%3E%3Cline x1='16' y1='2' x2='16' y2='6'%3E%3C/line%3E%3Cline x1='8' y1='2' x2='8' y2='6'%3E%3C/line%3E%3Cline x1='3' y1='10' x2='21' y2='10'%3E%3C/line%3E%3C/svg%3E");
+    background-size: 16px;
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    opacity: 1;
+  }
+
+  .date-input-field:focus::-webkit-calendar-picker-indicator {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23FFB900' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2' ry='2'%3E%3C/rect%3E%3Cline x1='16' y1='2' x2='16' y2='6'%3E%3C/line%3E%3Cline x1='8' y1='2' x2='8' y2='6'%3E%3C/line%3E%3Cline x1='3' y1='10' x2='21' y2='10'%3E%3C/line%3E%3C/svg%3E");
+  }
+
+  .date-input-field.date-invalid {
+    @apply border-red-500;
+    box-shadow: 0 0 0 1px #ef4444;
+  }
+
+  .date-input-field.date-invalid::-webkit-calendar-picker-indicator {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23ef4444' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2' ry='2'%3E%3C/rect%3E%3Cline x1='16' y1='2' x2='16' y2='6'%3E%3C/line%3E%3Cline x1='8' y1='2' x2='8' y2='6'%3E%3C/line%3E%3Cline x1='3' y1='10' x2='21' y2='10'%3E%3C/line%3E%3C/svg%3E");
+  }
+
+  .primary-button {
+    @apply flex items-center justify-between px-8 py-3 rounded-full bg-white text-buttonText font-semibold;
+  }
+  
+  /* Responsive container */
+  .responsive-container {
+    @apply w-full px-5 mx-auto;
+    @apply sm:px-6 sm:max-w-screen-sm md:max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl;
+  }
+  
+  /* Responsive grid */
+  .responsive-grid {
+    @apply grid grid-cols-1 gap-4;
+    @apply sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4;
+  }
+
+  /* Grid for standard 3-column layouts that should be 1 column on mobile */
+  .grid-responsive-3 {
+    @apply grid grid-cols-1 gap-4;
+    @apply md:grid-cols-2 lg:grid-cols-3;
+  }
+
+  /* Grid for standard 2-column layouts that should be 1 column on mobile */
+  .grid-responsive-2 {
+    @apply grid grid-cols-1 gap-4;
+    @apply md:grid-cols-2;
+  }
+} 
+
+/* Date input container styling */
+.date-input-container {
+  position: relative;
+}
+
+.date-input-container::after {
+  content: "";
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23FFB900' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2' ry='2'%3E%3C/rect%3E%3Cline x1='16' y1='2' x2='16' y2='6'%3E%3C/line%3E%3Cline x1='8' y1='2' x2='8' y2='6'%3E%3C/line%3E%3Cline x1='3' y1='10' x2='21' y2='10'%3E%3C/line%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.image-100-cover{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.login-bg{
+  max-height: 100svh;
+}
+
+/* Make the login page responsive */
+@media (max-width: 768px) {
+  .flex-vertical-moobile{
+    display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        column-gap: 10px;
+  }
+  .login-bg {
+    display: none;
+  }
+}
+
+.big-item{
+  position: relative;
+}
+
+.big-answer-wrap{
+  position: absolute;
+  top: 10px;
+  right:10px;
+  display: flex;
+  flex-direction: column;
+  row-gap: 5px;
+}
+
+.status-badge{
+  width: 100%;
+  text-align: center;
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
+
+.flex-wrap-center{
+  display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: center;
+}
+
+.small-item{
+  position: relative;
+  padding-top:40px;
+}
+
+/* Responsive padding for main content area */
+.main-content {
+  @apply py-4 px-5 md:py-6 md:px-6 lg:py-8 lg:px-8;
+}
+
+/* Responsive typography */
+h1 {
+  @apply text-2xl md:text-3xl lg:text-4xl;
+}
+
+h2 {
+  @apply text-xl md:text-2xl lg:text-3xl;
+}
+
+h3 {
+  @apply text-lg md:text-xl lg:text-2xl;
+}
+
+/* App layout with sidebar */
+.app-layout {
+  @apply flex flex-col md:flex-row min-h-screen;
+}
+
+.app-layout-content {
+  @apply flex-1; /* Match sidebar width */
+}
+
+/* Responsive tables */
+.responsive-table {
+  @apply w-full overflow-x-auto;
+}
+
+/* Progress Bar Styles */
+.progres-wrapper {
+    display: flex;
+    flex-direction: column;
+    row-gap: 8px;
+}
+
+.progress-item {
+    display: flex;
+    column-gap: 6px;
+    align-items: center;
+    font-size: 14px;
+    color: var(--Grey);
+}
+
+.progress-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    column-gap: 20px;
+}
+
+.progress-icon {
+    display: flex;
+    width: 15px;
+    height: 15px;
+    align-items: center;
+    justify-content: center;
+}
+
+.progress-bottom-line {
+    width: 100%;
+    height: 9px;
+    border-radius: 20px;
+    overflow: hidden;
+    background: rgba(217,217,217,0.2);
+}
+
+.line-active {
+    width: 72%;
+    height: 8px;
+    background: var(--yellow);
+}
+
+.progress-item-active {
+    color: var(--yellow)!important;
+}
+
+/* Text-based Progress Bar Styles */
+.progress-global-wrapper {
+    display: flex;
+    align-items: center;
+    column-gap: 6px;
+}
+
+.progress-text {
+    font-size: 14px;
+}
+
+.progress-text-active {
+    color: var(--yellow);
+}
+
+/* Mobile and Desktop Progress Wrapper Styles */
+.mobile-progress-wrapper {
+    display: none; /* Default hidden, shown only on mobile */
+}
+
+.desktop-progress-wrapper {
+    display: flex; /* Default shown, hidden only on mobile */
+}
+
+/* Adjustments for very small screens - below 480px */
+@media (max-width: 480px) {
+  .p-6{
+    padding: 1rem;
+  }
+p{
+  font-size: 14px;
+}
+  /* Content padding */
+  .main-content {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  
+  /* Force all grid-cols-3 to be single column */
+  .grid-cols-3 {
+    grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+  }
+  
+  /* Force all grid-cols-2 to be single column on mobile */
+  .grid-cols-2 {
+    grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+  }
+  
+  /* Padding adjustments */
+  .p-8 {
+    padding: 10px !important;
+  }
+  .mobile-navbar{
+    padding-top: 100px;
+  }
+  /* Fix spacing issues in flex layouts */
+  .space-x-6 > :not([hidden]) ~ :not([hidden]) {
+    margin-left: 0 !important;
+    margin-top: 10px;
+  }
+
+  .space-x-24 > :not([hidden]) ~ :not([hidden]) {
+    margin-left: 0 !important;
+    padding-top: 10px;
+  }
+  
+  /* Stack flex items in a column on mobile */
+  .mt-6.flex.justify-end {
+    flex-direction: column;
+    align-items: flex-start;
+    row-gap: 10px;
+  }
+  
+  /* Reverse columns in header layouts */
+  .is-header {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: flex-start;
+    row-gap: 20px;
+  }
+  .big-item{
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .small-item{
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  
+  /* Ensure touch targets are big enough */
+  button, .button, a[role="button"] {
+    min-height: 44px;
+  }
+}
+
+/* Enhanced responsive table styles */
+.responsive-table-container {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  scrollbar-width: thin;
+  scrollbar-color: #FFB900 #1a1a1a;
+}
+
+.responsive-table-container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.responsive-table-container::-webkit-scrollbar-track {
+  background: #1a1a1a;
+  border-radius: 4px;
+}
+
+.responsive-table-container::-webkit-scrollbar-thumb {
+  background: #FFB900;
+  border-radius: 4px;
+}
+
+.responsive-table-container::-webkit-scrollbar-thumb:hover {
+  background: #e6a600;
+}
+
+/* Column overflow styles */
+.table-column-overflow {
+  min-width: 0;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: #666 transparent;
+}
+
+.table-column-overflow::-webkit-scrollbar {
+  height: 4px;
+}
+
+.table-column-overflow::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.table-column-overflow::-webkit-scrollbar-thumb {
+  background: #666;
+  border-radius: 2px;
+}
+
+.table-column-overflow::-webkit-scrollbar-thumb:hover {
+  background: #888;
+}
+
+/* Signature Canvas Styles */
+.signature-canvas {
+  border-radius: 4px;
+  cursor: crosshair;
+  display: block;
+  touch-action: none; /* Prevent scrolling on touch devices */
+}
+
+.signature-canvas:hover {
+  background-color: #fafafa;
+}
+
+/* Progress Bar Responsive Behavior */
+@media (max-width: 991px) {
+
+  nav{
+    margin-bottom: 10px;
+  }
+  .p-12{
+    padding:1rem;
+  }
+  .apply-offer-box{
+    padding:10px;
+  }
+  .signature-canvas{
+    width: 100%!important;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .border-2.border-dashed.border-gray-300{
+    width: 100%;
+  }
+  .p-10.big-item .progres-wrapper {
+    display: none !important;
+  }
+  
+  .p-10.big-item .progress-global-wrapper {
+    display: flex !important;
+  }
+  .ctas-wrapper{
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+  }
+  .ctas-wrapper .space-x-3 > :not([hidden]) ~ :not([hidden]) {
+    margin-left: 0px!important;
+  }
+  .flex-vertical-mobile.first{
+    column-gap:10px;
+  }
+  .flex-vertical-mobile.first .space-x-2{
+    margin-top: 0px!important;
+  }
+
+  .proposal-box{
+    display: flex;
+        flex-direction: column;
+  }
+  .proposal-box .w-1\/3 {
+    width: 100%!important;
+  }
+  .proposal-box .w-2\/3 {
+    width: 100%!important;
+  }
+  .resposne-top-wrapper{
+    display: flex;
+        flex-direction: column;
+        gap: 10px;
+  }
+  .progress-text{
+    font-size: 12px!important;
+  }
+  .responses-list .p-6{
+    padding: 30px 10px!important;
+  }
+  
+  /* Responses page progress bar kontrola */
+  .mobile-progress-wrapper {
+    display: flex !important;
+  }
+  .desktop-progress-wrapper {
+    display: none !important;
+  }
+}
+
+/* Ensure both progress types are always rendered but controlled by CSS */
+@media (min-width: 992px) {
+  .p-10.big-item .progress-global-wrapper {
+    display: none !important;
+  }
+  
+  /* Responses page progress bar kontrola za desktop */
+  .mobile-progress-wrapper {
+    display: none !important;
+  }
+  .desktop-progress-wrapper {
+    display: flex !important;
+  }
+}
+
+.h-screen.bg-gray-100{
+  background-color: rgb(8 8 8 / var(--tw-bg-opacity, 1))!important;
+
+}
+.users-wrapper{
+  padding-left: 30px;
+  padding-right: 30px;
+  padding-top: 100px;
+  padding-bottom: 100px;
+}
