@@ -74,7 +74,7 @@ export default function AdminLayout({
   return (
     <AdminNotificationProvider>
       <AdminChatProvider>
-        <div className="flex h-screen bg-gray-100">
+        <div className="flex flex-col lg:flex-row h-screen bg-gray-100 gap-2 lg:gap-0">
           <AdminSidebar />
           <main className="flex-1 overflow-y-auto">
             {children}

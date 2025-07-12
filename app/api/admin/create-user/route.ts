@@ -16,14 +16,15 @@ const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, {
 type RequestData = {
   email: string;
   password: string;
-  fullName?: string;
-  token?: string;  // Dodali smo token za validaciju
+  fullName: string;
+  token: string;
+  phoneNumber?: string;
 };
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json() as RequestData;
-    const { email, password, fullName, token } = body;
+    const { email, password, fullName, token, phoneNumber } = body;
 
     // Validacija ulaznih podataka
     if (!email || !password) {
@@ -132,7 +133,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Kreiraj ili ažuriraj profil korisnika u tabeli users
-    if (userId && fullName) {
+    if (userId) {
       try {
         const { error: upsertError } = await supabaseAdmin
           .from('users')
@@ -140,6 +141,7 @@ export async function POST(request: NextRequest) {
             id: userId,
             email,
             full_name: fullName,
+            phone_number: phoneNumber || null,
             updated_at: new Date().toISOString()
           }, { onConflict: 'id' });
           
@@ -171,7 +173,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       { 
         success: true,
-        user: { id: userId, email }
+        user: { 
+          id: userId, 
+          email,
+          full_name: fullName,
+          phone_number: phoneNumber || null
+        }
       },
       { status: 200 }
     );

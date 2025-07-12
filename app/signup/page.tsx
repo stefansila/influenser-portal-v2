@@ -16,6 +16,7 @@ function SignUpForm() {
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [fullName, setFullName] = useState('')
+  const [phoneNumber, setPhoneNumber] = useState('')
   const [avatarFile, setAvatarFile] = useState<File | null>(null)
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null)
   const [showPassword, setShowPassword] = useState(false)
@@ -215,7 +216,6 @@ function SignUpForm() {
     setIsLoading(true)
     
     try {
-      console.log("SignUp: Beginning sign up process");
       
       // If we have an invite token, use the invite signup endpoint
       if (isInviteMode && inviteToken && inviteTagId) {
@@ -228,9 +228,9 @@ function SignUpForm() {
             email,
             password,
             fullName,
+            phoneNumber,
             inviteToken,
             tagId: inviteTagId,
-            // We'll handle avatar upload separately if needed
           }),
         })
         
@@ -398,6 +398,18 @@ function SignUpForm() {
                     Email is pre-filled from your invitation
                   </p>
                 )}
+              </div>
+              
+              {/* Phone Number input */}
+              <div>
+                <input 
+                  type="tel" 
+                  placeholder="Phone Number (Optional)" 
+                  className="input-field focus:border-white text-white"
+                  value={phoneNumber}
+                  onChange={(e) => setPhoneNumber(e.target.value)}
+                  disabled={isLoading}
+                />
               </div>
               
               {/* Password input with eye icon */}

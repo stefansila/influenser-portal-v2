@@ -10,6 +10,7 @@ function CompleteRegistrationForm() {
   
   const [email, setEmail] = useState('')
   const [fullName, setFullName] = useState('')
+  const [phoneNumber, setPhoneNumber] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [isLoading, setIsLoading] = useState(true) // Start with loading state
@@ -110,6 +111,7 @@ function CompleteRegistrationForm() {
           email: queryEmail,
           password: password,
           fullName: fullName,
+          phoneNumber: phoneNumber,
           token: token
         }),
       });
@@ -175,79 +177,93 @@ function CompleteRegistrationForm() {
   }
 
   return (
-    <div className="h-[90svh] flex items-center justify-center bg-background px-4">
+    <div className="h-[90svh] flex flex-col items-center justify-center bg-background px-4">
       <div className="max-w-md w-full rounded-lg bg-inputBg p-8 shadow-lg">
-        <h1 className="text-2xl font-bold text-textPrimary mb-6">Complete Your Registration</h1>
+        <h1 className="text-2xl font-bold text-center text-textPrimary mb-6">
+          Complete Registration
+        </h1>
         
-        {error && (
-          <div className="mb-6 p-4 bg-red-900/30 border border-red-500/30 rounded-md text-red-200 text-sm">
-            {error}
+        {message && (
+          <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded">
+            {message}
           </div>
         )}
         
-        {message && (
-          <div className="mb-6 p-4 bg-green-900/30 border border-green-500/30 rounded-md text-green-200 text-sm">
-            {message}
+        {error && (
+          <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+            {error}
           </div>
         )}
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-textSecondary mb-1">
+            <label className="block text-sm font-medium text-textSecondary mb-2">
               Email Address
             </label>
             <input
-              id="email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              disabled={true}
-              className="w-full px-4 py-2 bg-inputBg border border-white/20 rounded-md text-textPrimary placeholder-textTertiary focus:outline-none focus:ring-2 focus:ring-[#FFB900] focus:border-transparent opacity-70"
+              className="w-full px-3 py-2 border border-inputBorder rounded-md focus:outline-none focus:ring-2 focus:ring-[#FFB900] bg-inputBg text-textPrimary"
+              placeholder="Enter your email"
               required
+              disabled
             />
           </div>
           
           <div>
-            <label htmlFor="fullName" className="block text-sm font-medium text-textSecondary mb-1">
+            <label className="block text-sm font-medium text-textSecondary mb-2">
               Full Name
             </label>
             <input
-              id="fullName"
               type="text"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
+              className="w-full px-3 py-2 border border-inputBorder rounded-md focus:outline-none focus:ring-2 focus:ring-[#FFB900] bg-inputBg text-textPrimary"
               placeholder="Enter your full name"
-              className="w-full px-4 py-2 bg-inputBg border border-white/20 rounded-md text-textPrimary placeholder-textTertiary focus:outline-none focus:ring-2 focus:ring-[#FFB900] focus:border-transparent"
               required
             />
           </div>
           
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-textSecondary mb-1">
+            <label className="block text-sm font-medium text-textSecondary mb-2">
+              Phone Number (Optional)
+            </label>
+            <input
+              type="tel"
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+              className="w-full px-3 py-2 border border-inputBorder rounded-md focus:outline-none focus:ring-2 focus:ring-[#FFB900] bg-inputBg text-textPrimary"
+              placeholder="Enter your phone number"
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-textSecondary mb-2">
               Password
             </label>
             <input
-              id="password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Choose a password (min. 8 characters)"
-              className="w-full px-4 py-2 bg-inputBg border border-white/20 rounded-md text-textPrimary placeholder-textTertiary focus:outline-none focus:ring-2 focus:ring-[#FFB900] focus:border-transparent"
+              className="w-full px-3 py-2 border border-inputBorder rounded-md focus:outline-none focus:ring-2 focus:ring-[#FFB900] bg-inputBg text-textPrimary"
+              placeholder="Enter your password"
+              minLength={8}
               required
             />
           </div>
           
           <div>
-            <label htmlFor="confirmPassword" className="block text-sm font-medium text-textSecondary mb-1">
+            <label className="block text-sm font-medium text-textSecondary mb-2">
               Confirm Password
             </label>
             <input
-              id="confirmPassword"
               type="password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
+              className="w-full px-3 py-2 border border-inputBorder rounded-md focus:outline-none focus:ring-2 focus:ring-[#FFB900] bg-inputBg text-textPrimary"
               placeholder="Confirm your password"
-              className="w-full px-4 py-2 bg-inputBg border border-white/20 rounded-md text-textPrimary placeholder-textTertiary focus:outline-none focus:ring-2 focus:ring-[#FFB900] focus:border-transparent"
+              minLength={8}
               required
             />
           </div>
@@ -255,11 +271,9 @@ function CompleteRegistrationForm() {
           <button
             type="submit"
             disabled={isLoading}
-            className={`w-full px-4 py-2 bg-[#FFB900] text-buttonText font-medium rounded-md transition-colors hover:bg-[#FFC933] focus:outline-none focus:ring-2 focus:ring-[#FFB900] focus:ring-offset-2 focus:ring-offset-background ${
-              isLoading ? 'opacity-70 cursor-not-allowed' : ''
-            }`}
+            className="w-full py-2 px-4 bg-[#FFB900] text-buttonText font-medium rounded-md hover:bg-[#FFC933] focus:outline-none focus:ring-2 focus:ring-[#FFB900] disabled:bg-[#FFB900]/50 disabled:cursor-not-allowed"
           >
-            {isLoading ? 'Processing...' : 'Complete Registration'}
+            {isLoading ? 'Creating Account...' : 'Complete Registration'}
           </button>
         </form>
       </div>

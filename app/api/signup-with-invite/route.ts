@@ -17,12 +17,13 @@ type RequestData = {
   fullName: string;
   inviteToken: string;
   tagId: string;
+  phoneNumber?: string;
 };
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json() as RequestData;
-    const { email, password, fullName, inviteToken, tagId } = body;
+    const { email, password, fullName, inviteToken, tagId, phoneNumber } = body;
 
     // Validation
     if (!email || !password || !fullName || !inviteToken || !tagId) {
@@ -94,16 +95,17 @@ export async function POST(request: NextRequest) {
     // Create user profile
     const { data: userData, error: profileError } = await supabaseAdmin
       .from('users')
-      .insert([
+      .upsert([
         {
           id: authData.user.id,
           email: authData.user.email,
           full_name: fullName,
+          phone_number: phoneNumber || null,
           avatar_url: '/default-avatar.svg',
           role: 'user'
         }
-      ])
-      .select('role, full_name, avatar_url')
+      ], { onConflict: 'id' })
+      .select('role, full_name, avatar_url, phone_number')
       .single();
 
     if (profileError) {
@@ -150,12 +152,14 @@ export async function POST(request: NextRequest) {
         user: {
           id: authData.user.id,
           email: authData.user.email,
-          full_name: fullName
+          full_name: fullName,
+          phone_number: phoneNumber || null
         },
         userData: userData || {
           role: 'user',
           full_name: fullName,
-          avatar_url: '/default-avatar.svg'
+          avatar_url: '/default-avatar.svg',
+          phone_number: phoneNumber || null
         },
         tag: {
           id: tag.id,
