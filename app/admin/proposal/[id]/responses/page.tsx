@@ -32,6 +32,7 @@ type Proposal = {
   id: string
   title: string
   company_name: string
+  email_template_body?: string | null
 }
 
 export default function AllResponsesPage() {
@@ -46,13 +47,16 @@ export default function AllResponsesPage() {
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
   
+  // Add this state for email sending
+  const [isEmailSending, setIsEmailSending] = useState(false)
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         // 1. Fetch the proposal details
         const { data: proposalData, error: proposalError } = await supabase
           .from('proposals')
-          .select('id, title, company_name')
+          .select('id, title, company_name, email_template_body')
           .eq('id', id)
           .single()
         
@@ -311,6 +315,46 @@ export default function AllResponsesPage() {
       setShowDeleteModal(false)
     }
   }
+
+  // Add this function to handle manual email sending
+  const handleSendAdvertisingEmail = async () => {
+    if (!proposal || !proposal.email_template_body) {
+      alert('This proposal does not have an email template configured.')
+      return
+    }
+
+    if (!confirm('Are you sure you want to send advertising opportunity emails to all users who have access to this proposal? This will send emails to ALL users, even if they have already received this email before.')) {
+      return
+    }
+
+    setIsEmailSending(true)
+    
+    try {
+      const response = await fetch('/api/admin/send-advertising-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+              body: JSON.stringify({
+        proposalId: id,
+        forceResend: true
+      }),
+      })
+      
+      const result = await response.json()
+      
+      if (response.ok) {
+        alert(`Email sending completed!\n\nSent: ${result.results.sent}\nFailed: ${result.results.failed}\nTotal users: ${result.results.total}`)
+      } else {
+        alert(`Failed to send emails: ${result.error}`)
+      }
+    } catch (error) {
+      console.error('Error sending emails:', error)
+      alert('An error occurred while sending emails.')
+    } finally {
+      setIsEmailSending(false)
+    }
+  }
   
   if (isLoading || !proposal) {
     return (
@@ -341,6 +385,28 @@ export default function AllResponsesPage() {
         </div>
         
         <div className="flex items-center space-x-3">
+          {proposal?.email_template_body && (
+            <button
+              onClick={handleSendAdvertisingEmail}
+              disabled={isEmailSending}
+              className="px-4 py-2 bg-[#FFB900] text-black rounded-md hover:bg-[#e6a600] disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+            >
+              {isEmailSending ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
+                  <span>Sending...</span>
+                </>
+              ) : (
+                <>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6C2 4.9 2.9 4 4 4Z" stroke="currentColor" strokeWidth="2"/>
+                    <path d="M22 6L12 13L2 6" stroke="currentColor" strokeWidth="2"/>
+                  </svg>
+                  <span>Send Email</span>
+                </>
+              )}
+            </button>
+          )}
           <Link 
             href={`/admin/proposal/${id}/edit`} 
             className="px-4 py-2 bg-white rounded-md text-black flex items-center space-x-2"

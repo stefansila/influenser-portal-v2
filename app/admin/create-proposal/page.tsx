@@ -28,7 +28,8 @@ type FormData = {
   campaign_end_date: string,
   short_description: string,
   content: string,
-  disclaimer: string
+  disclaimer: string,
+  email_template_body: string
 }
 
 export default function CreateProposal() {
@@ -84,7 +85,8 @@ export default function CreateProposal() {
     campaign_end_date: '',
     short_description: '',
     content: '',
-    disclaimer: ''
+    disclaimer: '',
+    email_template_body: ''
   })
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -143,6 +145,17 @@ export default function CreateProposal() {
     setFormData({
       ...formData,
       content
+    })
+    
+    // Clear error when user makes changes
+    if (error) setError('')
+  }
+
+  // Handle email template rich text editor content change
+  const handleEmailTemplateRichTextChange = (content: string) => {
+    setFormData({
+      ...formData,
+      email_template_body: content
     })
     
     // Clear error when user makes changes
@@ -302,6 +315,75 @@ export default function CreateProposal() {
         // Get the updated HTML content with replaced image URLs
         processedContent = tempDiv.innerHTML
       }
+
+      // Process email template body to handle any base64 encoded images and upload them to Supabase
+      let processedEmailTemplateBody = formData.email_template_body
+      
+      // Check if we have any base64 images in the email template body
+      if (formData.email_template_body.includes('data:image')) {
+        // Create a temporary div to parse the HTML content
+        const tempDiv = document.createElement('div')
+        tempDiv.innerHTML = formData.email_template_body
+        
+        // Find all img elements with base64 encoded src
+        const base64Images = tempDiv.querySelectorAll('img[src^="data:image"]')
+        
+        for (let i = 0; i < base64Images.length; i++) {
+          const img = base64Images[i] as HTMLImageElement
+          
+          try {
+            // Extract the base64 data and file type
+            const base64String = img.src
+            const match = base64String.match(/^data:image\/(\w+);base64,(.*)$/)
+            
+            if (!match) continue
+            
+            const fileType = match[1]
+            const base64Data = match[2]
+            
+            // Convert base64 to blob
+            const byteCharacters = atob(base64Data)
+            const byteArrays = []
+            
+            for (let j = 0; j < byteCharacters.length; j += 512) {
+              const slice = byteCharacters.slice(j, j + 512)
+              
+              const byteNumbers = new Array(slice.length)
+              for (let k = 0; k < slice.length; k++) {
+                byteNumbers[k] = slice.charCodeAt(k)
+              }
+              
+              const byteArray = new Uint8Array(byteNumbers)
+              byteArrays.push(byteArray)
+            }
+            
+            const blob = new Blob(byteArrays, { type: `image/${fileType}` })
+            
+            // Generate a unique file name
+            const fileName = `email-template-images/${Math.random().toString(36).substring(2, 15)}.${fileType}`
+            
+            // Upload the file to Supabase Storage
+            const { error: uploadError } = await supabase.storage
+              .from('rich-text')
+              .upload(fileName, blob)
+              
+            if (uploadError) throw uploadError
+            
+            // Get public URL for the uploaded file
+            const { data: { publicUrl } } = supabase.storage
+              .from('rich-text')
+              .getPublicUrl(fileName)
+            
+            // Replace the base64 src with the new URL in the original image
+            img.src = publicUrl
+          } catch (error) {
+            console.error('Error uploading base64 image in email template:', error)
+          }
+        }
+        
+        // Get the updated HTML content with replaced image URLs
+        processedEmailTemplateBody = tempDiv.innerHTML
+      }
       
       // Prepare a more structured content for jsonb storage
       const contentJson = {
@@ -327,6 +409,7 @@ export default function CreateProposal() {
           short_description: formData.short_description,
           content: contentJson,
           disclaimer: formData.disclaimer,
+          email_template_body: processedEmailTemplateBody,
           created_by: user.id
         })
         .select()
@@ -363,6 +446,33 @@ export default function CreateProposal() {
           // Don't throw here - notifications are not critical for the main operation
         }
 
+        // Send advertising opportunity email if email template body is provided
+        if (formData.email_template_body && formData.email_template_body.trim()) {
+          try {
+            const emailResponse = await fetch('/api/admin/send-advertising-email', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                proposalId: proposalId,
+                userIds: selectedUsers
+              }),
+            })
+            
+            const emailResult = await emailResponse.json()
+            
+            if (emailResponse.ok) {
+              console.log('Advertising opportunity emails sent successfully:', emailResult)
+            } else {
+              console.error('Failed to send advertising opportunity emails:', emailResult.error)
+              // Don't throw here - email sending is not critical for the main operation
+            }
+          } catch (emailError) {
+            console.error('Error sending advertising opportunity emails:', emailError)
+            // Don't throw here - email sending is not critical for the main operation
+          }
+        }
 
       }
       
@@ -553,6 +663,27 @@ export default function CreateProposal() {
                   placeholder="Enter legal disclaimer that users must accept when responding (optional)"
                   rows={3}
                 ></textarea>
+              </div>
+              
+              <div>
+                <label htmlFor="email_template_body" className="block text-sm text-[#FFB900] mb-2">Email Template Body (Rich Text)</label>
+                {isMounted && (
+                  <div className="rich-text-editor-container">
+                    <ReactQuill
+                      theme="snow"
+                      value={formData.email_template_body}
+                      onChange={handleEmailTemplateRichTextChange}
+                      modules={modules}
+                      formats={formats}
+                      className="bg-[rgba(255,255,255,0.04)] text-white rounded-lg border border-white/20"
+                      placeholder="Enter the campaign details that will be sent in the advertising opportunity email to users..."
+                    />
+                  </div>
+                )}
+                <p className="text-xs text-gray-400 mt-1">
+                  This content will be included in the advertising opportunity email sent to users. 
+                  Include campaign details like sponsor info, platform requirements, timeline, talking points, etc.
+                </p>
               </div>
               
               <div>

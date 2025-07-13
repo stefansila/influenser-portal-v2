@@ -26,7 +26,8 @@ type FormData = {
   campaign_start_date: string,
   campaign_end_date: string,
   short_description: string,
-  content: string
+  content: string,
+  email_template_body: string
 }
 
 export default function EditProposal() {
@@ -51,7 +52,8 @@ export default function EditProposal() {
     campaign_start_date: '',
     campaign_end_date: '',
     short_description: '',
-    content: ''
+    content: '',
+    email_template_body: ''
   })
   
   // State to track if the component is mounted (for client-side rendering)
@@ -92,7 +94,8 @@ export default function EditProposal() {
           campaign_start_date: proposalData.campaign_start_date || '',
           campaign_end_date: proposalData.campaign_end_date || '',
           short_description: proposalData.short_description || '',
-          content: proposalData.content?.html || ''
+          content: proposalData.content?.html || '',
+          email_template_body: proposalData.email_template_body || ''
         })
         
         // Set logo preview if available
@@ -186,6 +189,17 @@ export default function EditProposal() {
     setFormData({
       ...formData,
       content
+    })
+    
+    // Clear error when user makes changes
+    if (error) setError('')
+  }
+
+  // Handle email template rich text editor content change
+  const handleEmailTemplateRichTextChange = (content: string) => {
+    setFormData({
+      ...formData,
+      email_template_body: content
     })
     
     // Clear error when user makes changes
@@ -329,6 +343,48 @@ export default function EditProposal() {
       
       // Get the updated HTML content with replaced image URLs
       processedContent = tempDiv.innerHTML
+
+      // Process email template body to handle any base64 encoded images and upload them to Supabase
+      let processedEmailTemplateBody = formData.email_template_body
+
+      // Find all base64 images in the email template body
+      const emailTempDiv = document.createElement('div')
+      emailTempDiv.innerHTML = processedEmailTemplateBody
+      const emailBase64Images = emailTempDiv.querySelectorAll('img[src^="data:image"]')
+
+      // Upload each base64 image to Supabase storage
+      for (let i = 0; i < emailBase64Images.length; i++) {
+        const img = emailBase64Images[i] as HTMLImageElement
+        try {
+          // Convert base64 to blob
+          const response = await fetch(img.src)
+          const blob = await response.blob()
+          
+          // Generate unique filename
+          const fileExt = blob.type.split('/')[1] || 'png'
+          const fileName = `email-template-${Date.now()}-${i}.${fileExt}`
+          
+          // Upload to Supabase storage
+          const { error: uploadError } = await supabase.storage
+            .from('rich-text')
+            .upload(fileName, blob)
+          
+          if (uploadError) throw uploadError
+          
+          // Get public URL for the uploaded file
+          const { data: { publicUrl } } = supabase.storage
+            .from('rich-text')
+            .getPublicUrl(fileName)
+          
+          // Replace the base64 src with the new URL in the original image
+          img.src = publicUrl
+        } catch (error) {
+          console.error('Error uploading base64 image in email template:', error)
+        }
+      }
+      
+      // Get the updated HTML content with replaced image URLs
+      processedEmailTemplateBody = emailTempDiv.innerHTML
       
       // Prepare a more structured content for jsonb storage
       const contentJson = {
@@ -365,7 +421,8 @@ export default function EditProposal() {
           campaign_start_date: formData.campaign_start_date,
           campaign_end_date: formData.campaign_end_date,
           short_description: formData.short_description,
-          content: contentJson
+          content: contentJson,
+          email_template_body: processedEmailTemplateBody
         })
         .eq('id', id)
       
@@ -408,6 +465,39 @@ export default function EditProposal() {
       if (notificationError) {
         console.error('Error handling notifications:', notificationError)
         // Don't throw here - notifications are not critical for the main operation
+      }
+
+      // Send advertising opportunity email to new users if email template body is provided
+      if (formData.email_template_body && formData.email_template_body.trim()) {
+        // Find users who are newly added (not in currentUserIds)
+        const newUsers = selectedUsers.filter(userId => !currentUserIds.includes(userId))
+        
+        if (newUsers.length > 0) {
+          try {
+            const emailResponse = await fetch('/api/admin/send-advertising-email', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                proposalId: id,
+                userIds: newUsers
+              }),
+            })
+            
+            const emailResult = await emailResponse.json()
+            
+            if (emailResponse.ok) {
+              console.log('Advertising opportunity emails sent to new users:', emailResult)
+            } else {
+              console.error('Failed to send advertising opportunity emails:', emailResult.error)
+              // Don't throw here - email sending is not critical for the main operation
+            }
+          } catch (emailError) {
+            console.error('Error sending advertising opportunity emails:', emailError)
+            // Don't throw here - email sending is not critical for the main operation
+          }
+        }
       }
       
       // Redirect back to admin dashboard on success
@@ -592,6 +682,27 @@ export default function EditProposal() {
               className="w-full px-3 py-4 rounded-lg bg-[rgba(255,255,255,0.04)] border border-white/20 focus:outline-none text-white h-24"
               placeholder="Enter a brief description of the proposal"
             />
+          </div>
+          
+          <div>
+            <label htmlFor="email_template_body" className="block text-sm text-[#FFB900] mb-2">Email Template Body (Rich Text)</label>
+            {isMounted && (
+              <div className="rich-text-editor-container">
+                <ReactQuill
+                  theme="snow"
+                  value={formData.email_template_body}
+                  onChange={handleEmailTemplateRichTextChange}
+                  modules={modules}
+                  formats={formats}
+                  className="bg-[rgba(255,255,255,0.04)] text-white rounded-lg border border-white/20"
+                  placeholder="Enter the campaign details that will be sent in the advertising opportunity email to users..."
+                />
+              </div>
+            )}
+            <p className="text-xs text-gray-400 mt-1">
+              This content will be included in the advertising opportunity email sent to users. 
+              Include campaign details like sponsor info, platform requirements, timeline, talking points, etc.
+            </p>
           </div>
           
           <div>

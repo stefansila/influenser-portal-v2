@@ -9,6 +9,10 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=tvoj_anon_ključ_ovde
 
 # Servisni ključ sa admin privilegijama - obavezan za API rute
 SUPABASE_SERVICE_KEY=tvoj_service_ključ_ovde
+
+# SendGrid konfiguracija - obavezno za slanje email pozivnica
+SENDGRID_API_KEY=tvoj_sendgrid_api_ključ_ovde
+SENDGRID_FROM_EMAIL=tvoj_verified_email@domen.com
 ```
 
 ## Kako dobiti ključeve
@@ -49,6 +53,17 @@ BEFORE UPDATE ON invitations
 FOR EACH ROW EXECUTE PROCEDURE update_modified_column();
 ```
 
+## Kako dobiti SendGrid ključeve
+
+1. Registrujte se na [SendGrid](https://sendgrid.com/)
+2. Idite na "Settings" -> "API Keys" u levom meniju
+3. Kliknite "Create API Key"
+4. Izaberite "Full Access" ili "Restricted Access" sa dozvolama za Mail Send
+5. Kopirajte API ključ i postavite ga kao `SENDGRID_API_KEY`
+6. Za `SENDGRID_FROM_EMAIL` koristite email adresu koju ste verifikovali u SendGrid-u
+
+**Važno**: SendGrid "from" email mora biti verifikovan u SendGrid dashboardu pod "Settings" -> "Sender Authentication".
+
 ## Uputstvo za Vercel Deployment
 
 Da biste uspešno postavili projekat na Vercel, potrebno je da dodate sledeće environment varijable u Vercel dashboard:
@@ -57,6 +72,8 @@ Da biste uspešno postavili projekat na Vercel, potrebno je da dodate sledeće e
 NEXT_PUBLIC_SUPABASE_URL=vaš_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=vaš_anon_ključ
 SUPABASE_SERVICE_KEY=vaš_service_ključ
+SENDGRID_API_KEY=vaš_sendgrid_api_ključ
+SENDGRID_FROM_EMAIL=vaš_verified_email@domen.com
 ```
 
 ### Rešavanje problema sa build-om
