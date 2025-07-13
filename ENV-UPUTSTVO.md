@@ -13,6 +13,9 @@ SUPABASE_SERVICE_KEY=tvoj_service_ključ_ovde
 # SendGrid konfiguracija - obavezno za slanje email pozivnica
 SENDGRID_API_KEY=tvoj_sendgrid_api_ključ_ovde
 SENDGRID_FROM_EMAIL=tvoj_verified_email@domen.com
+
+# Site URL za email linkove - važno za production
+NEXT_PUBLIC_SITE_URL=https://tvoj-domen.com
 ```
 
 ## Kako dobiti ključeve
@@ -74,6 +77,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=vaš_anon_ključ
 SUPABASE_SERVICE_KEY=vaš_service_ključ
 SENDGRID_API_KEY=vaš_sendgrid_api_ključ
 SENDGRID_FROM_EMAIL=vaš_verified_email@domen.com
+NEXT_PUBLIC_SITE_URL=https://vaš-vercel-domain.vercel.app
 ```
 
 ### Rešavanje problema sa build-om

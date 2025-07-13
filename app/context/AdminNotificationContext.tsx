@@ -59,6 +59,31 @@ export const AdminNotificationProvider = ({ children }: { children: React.ReactN
     }
   };
 
+  // Function to send notification email
+  const sendNotificationEmail = async (notificationId: string) => {
+    try {
+      const response = await fetch('/api/notifications/send-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          notification_id: notificationId
+        }),
+      });
+
+      const result = await response.json();
+      
+      if (response.ok) {
+        console.log('Admin notification email sent successfully:', result);
+      } else {
+        console.error('Failed to send admin notification email:', result.error);
+      }
+    } catch (error) {
+      console.error('Error sending admin notification email:', error);
+    }
+  };
+
   const markAsRead = async (id: string) => {
     try {
       const { error } = await supabase
@@ -121,6 +146,9 @@ export const AdminNotificationProvider = ({ children }: { children: React.ReactN
             if (!newNotification.is_read) {
               setUnreadCount(prev => prev + 1);
             }
+            
+            // Automatically send email for new admin notifications
+            sendNotificationEmail(newNotification.id);
           }
         )
         .on(

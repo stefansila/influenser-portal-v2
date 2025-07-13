@@ -201,15 +201,8 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
       
       setUnreadCount(unread);
       
-      // Automatically mark messages as read after a short delay
-      if (unread > 0) {
-        if (markAsReadTimeoutRef.current) {
-          clearTimeout(markAsReadTimeoutRef.current);
-        }
-        markAsReadTimeoutRef.current = setTimeout(() => {
-          markMessagesAsRead();
-        }, 1000); // Mark as read after 1 second
-      }
+      // Don't automatically mark messages as read - let user chat page handle this
+      // when user actually opens the chat page
       
     } catch (err: any) {
       console.error('Messages fetch error:', err);
@@ -221,10 +214,6 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
     // Skip if already loaded for this proposal
     if (proposalId === currentProposalId && chatId) {
       console.log('Chat already set for proposal:', proposalId);
-      // Still mark messages as read if there are unread ones
-      if (unreadCount > 0) {
-        markMessagesAsRead();
-      }
       return;
     }
     
@@ -481,13 +470,8 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
             return [...prevMessages, newMessage];
           });
           
-          // Automatically mark the new message as read after a short delay
-          if (markAsReadTimeoutRef.current) {
-            clearTimeout(markAsReadTimeoutRef.current);
-          }
-          markAsReadTimeoutRef.current = setTimeout(() => {
-            markMessagesAsRead();
-          }, 1500); // Mark as read after 1.5 seconds
+          // Don't automatically mark messages as read - let user chat page handle this
+          // when user actually opens the chat page
           
         } catch (error) {
           console.error('Error processing new message:', error);

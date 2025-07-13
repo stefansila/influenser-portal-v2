@@ -69,9 +69,9 @@ export default function DashboardLayout({
 
   return (
     <ClientProviders>
-      <div className="flex flex-col lg:flex-row h-screen bg-gray-100 gap-2 lg:gap-0">
+      <div className="flex flex-col lg:flex-row min-h-screen bg-gray-100 gap-2 lg:gap-0">
         <Sidebar />
-        <main className="flex-1 overflow-y-auto">
+        <main className="flex-1">
           {children}
         </main>
       </div>

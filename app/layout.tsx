@@ -2,6 +2,7 @@ import './globals.css'
 import type { Metadata } from 'next'
 import AuthProviderClient from './components/AuthProviderClient'
 import DatePickerInitializer from './components/DatePickerInitializer'
+import ScrollToTop from './components/ScrollToTop'
 
 export const metadata: Metadata = {
   title: 'Advertising Platform | Senergy Capital',
@@ -21,6 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
+        <ScrollToTop />
         <AuthProviderClient>
           {children}
         </AuthProviderClient>

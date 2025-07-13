@@ -88,6 +88,31 @@ export const NotificationProvider = ({ children }: { children: React.ReactNode }
     await fetchNotifications();
   };
 
+  // Function to send notification email
+  const sendNotificationEmail = async (notificationId: string) => {
+    try {
+      const response = await fetch('/api/notifications/send-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          notification_id: notificationId
+        }),
+      });
+
+      const result = await response.json();
+      
+      if (response.ok) {
+        console.log('Notification email sent successfully:', result);
+      } else {
+        console.error('Failed to send notification email:', result.error);
+      }
+    } catch (error) {
+      console.error('Error sending notification email:', error);
+    }
+  };
+
   useEffect(() => {
     if (user) {
       fetchNotifications();
@@ -107,6 +132,9 @@ export const NotificationProvider = ({ children }: { children: React.ReactNode }
             const newNotification = formatNotificationLinks(payload.new as Notification);
             setNotifications(prev => [newNotification, ...prev]);
             setUnreadCount(prev => prev + 1);
+            
+            // Automatically send email for new notifications
+            sendNotificationEmail(newNotification.id);
           }
         )
         .on(

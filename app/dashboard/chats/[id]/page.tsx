@@ -8,6 +8,7 @@ import { supabase } from '../../../lib/supabase';
 import ChatMessage from '../../../components/ChatMessage';
 import { v4 as uuidv4 } from 'uuid';
 import { ChatMessage as MessageType } from '../../../context/ChatContext';
+import { useChat } from '../../../context/ChatContext';
 
 type ProposalInfo = {
   id: string;
@@ -17,6 +18,7 @@ type ProposalInfo = {
 
 export default function ChatPage({ params }: { params: { id: string } }) {
   const { user, isLoading } = useAuth();
+  const { markMessagesAsRead, setChatProposalId } = useChat();
   const router = useRouter();
   const [proposal, setProposal] = useState<ProposalInfo | null>(null);
   const [responseId, setResponseId] = useState<string | null>(null);
@@ -33,7 +35,7 @@ export default function ChatPage({ params }: { params: { id: string } }) {
   const [uploadError, setUploadError] = useState<string | null>(null);
   const realtimeChannelRef = useRef<any>(null);
 
-  // Local function to mark messages as read without affecting global context
+  // Local function to mark messages as read for specific chat
   const markMessagesAsReadLocal = async (chatIdToMark: string) => {
     if (!user || !chatIdToMark) return;
     
@@ -163,6 +165,9 @@ export default function ChatPage({ params }: { params: { id: string } }) {
         
         setChatId(activeChat.id);
         setProposal(proposalData);
+        
+        // Set the chat proposal ID in the global context
+        await setChatProposalId(params.id);
         
         // Učitaj poruke za ovaj chat
         const { data: messagesData, error: messagesError } = await supabase
